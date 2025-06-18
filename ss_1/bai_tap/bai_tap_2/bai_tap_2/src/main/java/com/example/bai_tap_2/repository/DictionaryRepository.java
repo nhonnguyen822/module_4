@@ -2,7 +2,6 @@ package com.example.bai_tap_2.repository;
 
 import org.springframework.stereotype.Repository;
 
-import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,5 +47,4 @@ public class DictionaryRepository implements IDictionaryRepository {
     public Map<String, String> findAll() {
         return dictionary;
     }
-
 }
