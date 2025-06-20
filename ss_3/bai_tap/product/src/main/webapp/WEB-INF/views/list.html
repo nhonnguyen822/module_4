@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<header th:replace="/layout::header">
+</header>
+<body class="container">
+<nav th:replace="/layout::nav"></nav>
+<h1>Products Management </h1>
+
+<a href="/create" class="btn btn-success mb-4">Create Product</a>
+<table class="table table-bordered">
+    <tr class="table-dark">
+        <th>STT</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Describe</th>
+        <th>Manufacture</th>
+        <th>Action</th>
+    </tr>
+    <tr th:each="product,status:${productsList}">
+        <td th:text="${status.count}"></td>
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.describe}"></td>
+        <td th:text="${product.manufacture}"></td>
+        <td>
+            <a th:href="@{/delete/{id}(id=${product.id})}" class="btn btn-danger ">Delete</a>
+            <a th:href="@{/update/{id}(id=${product.id})}" class="btn btn-warning ">Update</a>
+            <a th:href="@{/detail/{id}(id=${product.id})}" class="btn btn-success">Detail</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

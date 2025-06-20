@@ -46,6 +46,7 @@ public class ProductController {
     public ProductController(IProductService productService) {
         this.productService = productService;
     }
+
     @GetMapping("")
     public String index(Model model) {
         List<Product> products = productService.findAll();
