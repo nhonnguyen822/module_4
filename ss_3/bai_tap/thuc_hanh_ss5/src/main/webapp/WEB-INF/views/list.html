@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="layout::header">
+    <title>CustomerHome</title>
+<body>
+<nav th:replace="/layout::nav"></nav>
+<h1>Customer Manager</h1>
+<div th:if="${success != null}" th:replace="/layout :: toast(${success})"></div>
+<a href="/create" class="btn btn-success mb-4">Create Product</a>
+<table class="table table-bordered">
+    <tr class="table-dark">
+        <th>STT</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Action</th>
+    </tr>
+    <tr th:each="customer,status:${customersList}">
+        <td th:text="${status.count}"></td>
+        <td th:text="${customer.name}">Name</td>
+        <td th:text="${customer.address}">Address</td>
+        <td>
+            <button class="btn btn-sm btn-danger" th:attr="data-id=${customer.id},data-name=${customer.name}"
+                    onclick="openDeleteModal(this)">Delete
+            </button>
+        </td>
+    </tr>
+</table>
+<div th:replace="layout::deleteModal"></div>
+</body>
+</html>

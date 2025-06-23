@@ -69,8 +69,8 @@ public class AppConfiguration extends WebMvcConfigurerAdapter implements Applica
         viewResolver.setCharacterEncoding("UTF-8");
         return viewResolver;
     }
-    
- // config file message
+
+    // config file message
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
@@ -89,7 +89,7 @@ public class AppConfiguration extends WebMvcConfigurerAdapter implements Applica
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[]{"com/example/product"});
+        em.setPackagesToScan(new String[]{"com/example/thuc_hanh_ss5"});
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaProperties(additionalProperties());
@@ -100,7 +100,7 @@ public class AppConfiguration extends WebMvcConfigurerAdapter implements Applica
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/product?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true&useSSL=false");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/customers?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true&useSSL=false");
         dataSource.setUsername("root");
         dataSource.setPassword("codegym");
         return dataSource;

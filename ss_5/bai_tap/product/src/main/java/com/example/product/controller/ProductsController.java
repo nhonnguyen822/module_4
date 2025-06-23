@@ -5,7 +5,6 @@ import com.example.product.service.IProductsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -31,12 +30,16 @@ public class ProductsController {
     }
 
     @PostMapping("create")
-    private String create(@ModelAttribute Products product, RedirectAttributes redirectAttributes) {
+    private String create(@ModelAttribute Products product) {
         productsService.save(product);
-        redirectAttributes.addFlashAttribute("success", "Thêm Mới Thành Công");
         return "redirect:/home";
     }
 
+    @GetMapping("delete/{id}")
+    public String delete(@PathVariable int id) {
+        productsService.delete(id);
+        return "redirect:/home";
+    }
 
     @GetMapping("update/{id}")
     private String showUpdateForm(@PathVariable int id, Model model) {
@@ -64,13 +67,5 @@ public class ProductsController {
         model.addAttribute("productsList", productsList);
         return "list";
     }
-
-    @PostMapping("/delete")
-    public String delete(@RequestParam int id, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("success", "Xoá Thành Công");
-        productsService.delete(id);
-        return "redirect:/home";
-    }
-
 }
 

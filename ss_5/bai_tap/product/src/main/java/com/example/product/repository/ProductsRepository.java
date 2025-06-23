@@ -8,11 +8,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class ProductsRepository implements IProductsRepository {
+    private static final List<Products> productsList = new ArrayList<>();
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -78,8 +79,12 @@ public class ProductsRepository implements IProductsRepository {
 
     @Override
     public List<Products> searchByName(String name) {
-        Query query = entityManager.createNativeQuery("select * from products where name like concat('%',?1,'%')", Products.class);
-        query.setParameter(1, name);
-        return query.getResultList();
+        List<Products> productsFindByName = new ArrayList<>();
+        for (Products product : productsList) {
+            if (product.getName().toLowerCase().contains(name.trim().toLowerCase())) {
+                productsFindByName.add(product);
+            }
+        }
+        return productsFindByName;
     }
 }
