@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:insert="~{/layout/layout::library}"></th:block>
+</head>
+<body class="container mt-5">
+<div class="card shadow rounded">
+    <div class="card-header bg-primary text-white">
+        <h4>Blog</h4>
+    </div>
+    <div class="card-body">
+        <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Summary:</label>
+            <div class="col-sm-9">
+                <span th:text="${blog.summary}"></span>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Content:</label>
+            <div class="col-sm-9">
+                <span th:text="${blog.content}"></span>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label class="col-sm-3 col-form-label fw-bold">Comment:</label>
+            <div class="col-sm-9">
+                <ul>
+                    <li th:each="comment :${blog.getComments()}" th:text="${comment.comment}"></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card-footer text-end">
+            <a href="/home" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

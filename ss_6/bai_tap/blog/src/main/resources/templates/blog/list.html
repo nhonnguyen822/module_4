@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog Manager</title>
+    <th:block th:insert="~{layout/layout::library}"></th:block>
+</head>
+<body>
+<div th:replace="~{layout/layout::nav}"></div>
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary">Blog Manager</h1>
+
+    <div th:if="${success != null}" th:replace="~{layout/layout::toast(${success})}"></div>
+
+    <div class="mb-3 text-end">
+        <a href="/create" class="btn btn-success">Create Blog</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        <div class="col" th:each="blog : ${blogs}">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0" th:text="${blog.title}">Blog Title</h5>
+                </div>
+                <div class="card-body">
+                    <span th:text="${blog.users != null ? blog.users.user : 'No author'}"></span>
+                    <p class="card-text" th:text="${blog.summary}">Summary here...</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-warning btn-sm" th:href="@{'/detail/' + ${blog.id}}">Detail</a>
+                    <button class="btn btn-danger btn-sm"
+                            th:attr="data-id=${blog.id},data-name=${blog.title}"
+                            onclick="openDeleteModal(this)">
+                        Delete
+                    </button>
+                    <a th:href="@{update/__${blog.id}__}" class="btn btn-warning">Update</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-end">
+        <a href="/home" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>
+
+<!-- Modal xóa -->
+<div th:replace="~{/layout/layout::deleteModal}"></div>
+
+<script>
+    function openDeleteModal(button) {
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        document.getElementById('deleteProductId').value = id;
+        document.getElementById('productNameToDelete').innerText = name;
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const toastEl = document.getElementById("toastSuccess");
+        if (toastEl) {
+            const toast = new bootstrap.Toast(toastEl, {delay: 3000});
+            toast.show();
+        }
+    });
+</script>
+</body>
+</html>
