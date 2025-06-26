@@ -4,6 +4,11 @@ import com.example.bai_tap_2.dto.SongRequestDto;
 import com.example.bai_tap_2.entity.Songs;
 import com.example.bai_tap_2.service.ISongsService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,8 +27,13 @@ public class SongsController {
     }
 
     @GetMapping("")
-    public String showList(Model model) {
-        model.addAttribute("songList", songsService.findAll());
+    public String showList(@RequestParam(required = false, defaultValue = "0") int page,
+                           @RequestParam(required = false, defaultValue = "5") int size,
+                           @RequestParam(required = false, defaultValue = "") String searchName, Model model) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "song_name");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Songs> songsPage = songsService.searchBySongName(searchName, pageable);
+        model.addAttribute("songPage", songsPage);
         return "song/list";
     }
 

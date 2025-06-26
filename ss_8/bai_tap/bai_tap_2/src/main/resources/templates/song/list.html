@@ -63,7 +63,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="song,status : ${songList}">
+    <tr th:each="song,status : ${songPage}">
         <td th:text="${status.count}"></td>
         <td th:text="${song.songName}">Tên</td>
         <td th:text="${song.artistPerforming}">Nghệ sĩ</td>
@@ -79,8 +79,29 @@
     </tr>
     </tbody>
 </table>
+<nav>
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${!songPage.hasPrevious()} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{/songs(page=${songPage.number - 1}, size=${songPage.size}, searchName=${searchName})}">
+                Previous
+            </a>
+        </li>
 
-<!-- Delete Modal Fragment -->
+        <li class="page-item disabled">
+            <span class="page-link">
+                <span th:text="${songPage.number + 1}"></span>/<span th:text="${songPage.totalPages}"></span>
+            </span>
+        </li>
+
+        <li class="page-item" th:classappend="${!songPage.hasNext()} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{/songs(page=${songPage.number + 1}, size=${songPage.size}, searchName=${searchName})}">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>
 <div th:fragment="deleteModal">
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -92,7 +113,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        Do you want to delete blog: <strong id="songNameToDelete"></strong>?
+                        Do you want to delete song: <strong id="songNameToDelete"></strong>?
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-danger">Delete</button>
