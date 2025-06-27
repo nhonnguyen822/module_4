@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>List Boots</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        a.button {
+            padding: 6px 12px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        a.button.update {
+            background-color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+
+<h2>List Book</h2>
+
+<!-- Toast Fragment -->
+<div th:fragment="toast(message)">
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080">
+        <div class="toast align-items-center text-bg-success border-0" role="alert"
+             aria-live="assertive" aria-atomic="true" th:id="${message != null ? 'toastSuccess' : null}">
+            <div class="d-flex">
+                <div class="toast-body" th:text="${message}">Success!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a th:href="@{/books/return}" class="button">Return Book</a>
+<table>
+    <thead>
+    <tr>
+        <th>STT</th>
+        <th>Tên sách</th>
+        <th>Tác giả</th>
+        <th>Số lượng</th>
+        <th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book, status : ${bookPage}">
+        <td th:text="${status.count}"></td>
+        <td th:text="${book.title}">Tên sách</td>
+        <td th:text="${book.author}">Tác giả</td>
+        <td th:text="${book.quantity}">Số lượng</td>
+        <td>
+            <a th:href="@{/books/detail/{id}(id=${book.id})}" class="btn btn-warning btn-sm">Detail</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Phân trang -->
+<nav>
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:if="${bookPage != null}"  th:classappend="${!bookPage.hasPrevious()} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{/books(page=${bookPage.number - 1}, size=${bookPage.size}, searchName=${searchName})}">
+                Previous
+            </a>
+        </li>
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                <span th:text="${bookPage.number + 1}"></span>/<span th:text="${bookPage.totalPages}"></span>
+            </span>
+        </li>
+
+        <li class="page-item"  th:if="${bookPage != null}"  th:classappend="${!bookPage.hasNext()} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{/books(page=${bookPage.number + 1}, size=${bookPage.size}, searchName=${searchName})}">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toastEl = document.getElementById("toastSuccess");
+        if (toastEl) {
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    });
+</script>
+</body>
+</html>
