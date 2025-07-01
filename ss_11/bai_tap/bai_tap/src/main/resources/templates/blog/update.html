@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:insert="~{layout/layout::library}"></th:block>
+</head>
+<body>
+<form action="/home/update" method="post" th:object="${blog}">
+    <div class="mb-3">
+        <label for="title" class="form-label"> Enter Title</label>
+        <input class="form-control" id="title" th:field="*{title}" type="text">
+    </div>
+
+    <div class="mb-3">
+        <label for="summary" class="form-label"> Enter Summary</label>
+        <input class="form-control" id="summary" th:field="*{summary}" type="text">
+    </div>
+
+    <div class="mb-3">
+        <label for="content" class="form-label"> Enter Content </label>
+        <input class="form-control" id="content" th:field="*{content}" type="text">
+    </div>
+    <div class="mb-3">
+        <label for="users" class="form-label"> Select Users </label>
+        <select class="form-control" id="users" name="userId">
+            <option th:each="user:${users}" th:text="${user.user}" th:value="${user.id}"></option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="categoryList" class="form-label"> Select Category </label>
+        <select class="form-control" id="categoryList" name="categoryId">
+            <option th:each="category:${categoryList}" th:text="${category.name}" th:value="${category.id}"></option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog Manager</title>
+    <th:block th:insert="~{layout/layout::library}"></th:block>
+</head>
+<body>
+<div th:replace="~{layout/layout::nav}"></div>
+<a href="/category" class="btn btn-warning">  Click-->Category</a>
+<form action="/home" method="get" class="d-flex" role="search">
+    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchName"
+           th:value="${searchName}"/>
+
+    <select name="categoryId" class="form-select">
+        <option value="">-- Select Category --</option>
+        <option th:each="c : ${categoryList}" th:value="${c.id}" th:text="${c.name}"></option>
+    </select>
+
+    <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary">Blog Manager</h1>
+
+    <div th:if="${success != null}" th:replace="~{layout/layout::toast(${success})}"></div>
+
+    <div class="mb-3 text-end">
+        <a href="/home/create" class="btn btn-success">Create Blog</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="blog : ${blogsPage.content}">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0" th:text="${blog.title}">Blog Title</h5>
+                </div>
+                <div class="card-body">
+                    <h6> Category :</h6>  <span
+                        th:text="${blog.category != null ? blog.category.name: 'No author'}"></span>
+                    <h6> User :</h6>  <span th:text="${blog.users != null ? blog.users.user : 'No author'}"></span>
+                    <p class="card-text" th:text="${blog.summary}">Summary here...</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a class="btn btn-warning btn-sm" th:href="@{'home/detail/' + ${blog.id}}">Detail</a>
+                    <button class="btn btn-danger btn-sm"
+                            th:attr="data-id=${blog.id},data-name=${blog.title}"
+                            onclick="openDeleteModal(this)">
+                        Delete
+                    </button>
+                    <a th:href="@{home/update/__${blog.id}__}" class="btn btn-warning">Update</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a th:if="${blogsPage.hasPrevious()}"
+       th:href="@{/home(page=${blogsPage.number -1},searchName=${searchName})}">Pre</a>
+    <span th:text="${blogsPage.number+1}"></span>/<span th:text="${blogsPage.totalPages}"></span>
+    <a th:if="${blogsPage.hasNext()}" th:href="@{/home(page=${blogsPage.number +1},searchName=${searchName})}">Next</a>
+
+    <div class="mt-4 text-end">
+        <a href="/home" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>
+<!-- Delete Modal Fragment -->
+<div th:fragment="deleteModal">
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="post" th:action="@{home/delete}">
+                <input type="hidden" name="id" id="deleteBlogId">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Do you want to delete blog: <strong id="blogNameToDelete"></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDeleteModal(button) {
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        document.getElementById('deleteBlogId').value = id;
+        document.getElementById('blogNameToDelete').innerText = name;
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const toastEl = document.getElementById("toastSuccess");
+        if (toastEl) {
+            const toast = new bootstrap.Toast(toastEl, {delay: 3000});
+            toast.show();
+        }
+    });
+</script>
+</body>
+</html>
