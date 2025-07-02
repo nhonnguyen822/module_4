@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        form {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            max-width: 500px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        /*#blog-form {*/
+        /*    display: none;*/
+        /*}*/
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .modal-overlay {
+            display: none; /* Ẩn ban đầu */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5); /* nền tối mờ */
+            z-index: 1000;
+        }
+
+        /* Nội dung form nổi */
+        .modal-content {
+            background: white;
+            width: 400px;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+<button id="toggle-modal">+Thêm mới</button>
+<h1>Danh sách Blog</h1>
+<table border="1" id="blog-table">
+    <thead>
+    <tr>
+        <th>Tiêu đề</th>
+        <th>Tóm tắt</th>
+        <th>Nội dung</th>
+        <th>Danh mục</th>
+    </tr>
+    </thead>
+    <tbody id="contents">
+    <!-- blog rows will be inserted here -->
+    </tbody>
+</table>
+<button id="more">More</button>
+<hr>
+
+<div id="modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>Thêm Blog Mới</h2>
+        <form id="blog-form">
+            <label>Tiêu đề: <input type="text" id="title"></label><br>
+            <label>Tóm tắt: <input type="text" id="summary"></label><br>
+            <label>Nội dung: <input type="text" id="content"></label><br>
+            <label>Danh mục:
+                <select id="category">
+                    <!-- options from API -->
+                </select>
+            </label><br>
+            <button type="submit">Thêm Blog</button>
+            <button type="button" id="close-modal" style="background-color:#dc3545;">Đóng</button>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        let page = 0;
+        display(page);
+
+        $.ajax({
+            url: "http://localhost:8080/api/v1/categorys",
+            method: "get",
+            contentType: "application/json",
+            data: JSON.stringify(),
+            success: function (data) {
+                let option = "";
+                for (let i = 0; i < data.length; i++) {
+                    option += `<option value="${data[i].id}">${data[i].name}</option>`
+                }
+                $("#category").html(option);
+            }
+        })
+
+        $('#toggle-form').click(function (){
+            $('#blog-form').slideToggle();
+        })
+
+        function display(page) {
+            let content = "";
+            $.ajax({
+                url: `http://localhost:8080/api/v1/blogs?page=${page}`,
+                dataType: "json",
+                method: "get",
+                contentType: "application/json",
+                success: function (data, textStatus, res) {
+                    console.log("------data------------");
+                    for (let i = 0; i < data.content.length; i++) {
+                        content += `
+                      <tr>
+                        <td>${data.content[i].title}</td>
+                        <td>${data.content[i].summary}</td>
+                        <td>${data.content[i].content}</td>
+                         <td>${data.content[i].category.name}</td>
+                      </tr>
+                        `
+                    }
+                    $("#contents").append(content)
+                    console.log(data);
+                    console.log(textStatus)
+                    console.log(res.status)
+                }
+            })
+        }
+
+        $('#more').click(function () {
+            page++;
+            display(page)
+        })
+
+        $('#blog-form').submit(function () {
+            let title = $('#title').val();
+            let summary = $('#summary').val();
+            let content = $('#content').val();
+            let newBlog = {
+                title: title,
+                summary: summary,
+                content: content
+            }
+
+            $.ajax({
+                url: "http://localhost:8080/api/v1/blogs",
+                method: "post",
+                contentType: "application/json",
+                data: JSON.stringify(newBlog),
+                complete: function () {
+                    console.log("thêm mới thành công")
+                    console.log(res.status);
+                    page = 0;
+                    display()
+                }
+            })
+        })
+
+        $('#toggle-modal').click(function () {
+            $('#modal').fadeIn();
+        });
+
+        $('#close-modal').click(function () {
+            $('#modal').fadeOut();
+        });
+
+    })
+</script>
+</body>
+</html>
